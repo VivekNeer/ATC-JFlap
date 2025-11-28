@@ -1,0 +1,211 @@
+\documentclass[12pt,a4paper]{article}
+
+% --------------------------------------------------------
+% PACKAGES
+% --------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{xcolor}
+
+\geometry{a4paper, margin=1in}
+\graphicspath{{./images/}}
+
+\title{\textbf{Automata Theory and Computability Assignment}}
+\author{Vivek}
+\date{\today}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+% --------------------------------------------------------
+% 1. INTRODUCTION
+% --------------------------------------------------------
+\section{Introduction}
+
+This report presents the design and analysis of several computational models in the theory of computation, including Finite Automata (FA), Pushdown Automata (PDA), and Turing Machines (TM).  
+For each language, appropriate computational models are constructed and verified using JFLAP.  
+The report is organized so that \textbf{each question has its methodology, results, and discussion grouped under Sections 3, 4, and 5 respectively}.
+
+% --------------------------------------------------------
+% 2. PROBLEM STATEMENTS
+% --------------------------------------------------------
+\section{Problem Statements}
+
+\begin{verbatim}
+1.  Design a NPDA for L = { a^n b^n | n >= 1 }
+2.  Construct DFA for L = { a b^n a^m : n >= 2, m >= 3 }
+3.  DFA for strings ending with '0011', Σ = {0,1}
+4.  NPDA for L = { a^n b^m c^(n+m) }
+5.  Minimal DFA where 'a' is never followed by 'bb'
+12. NFA for {ab, abc}*
+13. DFA for strings ending with 'abb'
+14. DFA for strings ending with 'abba'
+15. DFA/NFA for strings containing “the”
+16. DFA/NFA for strings ending with “ing”
+29. TM accepting palindromes over {a,b}
+30. TM accepting { w w^R }
+24. TM accepting { 0^n 1^n }
+25. TM accepting { 0^n 1^n 2^n }
+26. TM for strings containing substring 001
+\end{verbatim}
+
+% --------------------------------------------------------
+% 3. METHODOLOGY
+% --------------------------------------------------------
+\section{Methodology}
+
+This section details the construction approach for each question.
+
+% --------------------------------------------------------
+% Question 1 Methodology
+% --------------------------------------------------------
+\subsection{Methodology for Question 1: NPDA for $a^n b^n$}
+
+\begin{itemize}
+    \item Identify that equal matching requires a stack → use PDA.
+    \item Push all input \texttt{a}'s.
+    \item On first \texttt{b}, transition to popping mode.
+    \item Accept only when stack returns to bottom marker.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q1_Screenshot_2025_11_28_203141.png}
+    \caption{NPDA for Question 1 (Part 1)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q1_Screenshot_2025_11_28_203152.png}
+    \caption{NPDA for Question 1 (Part 2)}
+\end{figure}
+
+% --------------------------------------------------------
+% Question 2 Methodology
+% --------------------------------------------------------
+\subsection{Methodology for Question 2: DFA for $ab^n a^m$}
+
+\begin{itemize}
+    \item Enforce structure: 1 a → $\ge 2$ b's → $\ge 3$ a's.
+    \item Dedicated states ensure minimal required counts.
+    \item Loop transitions handle additional b's and a's.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q2_image.png}
+    \caption{DFA for Question 2}
+\end{figure}
+
+% You continue this same pattern for Questions 3–26
+% Each question gets its own subsection under Methodology
+% --------------------------------------------------------
+
+% --------------------------------------------------------
+% 4. RESULTS
+% --------------------------------------------------------
+\section{Results}
+
+This section presents acceptance tables and correctness verification for each question.
+
+% --------------------------------------------------------
+% Question 1 Results
+% --------------------------------------------------------
+\subsection{Results for Question 1}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Reason} \\ \hline
+ab & Accept & 1 a, 1 b \\ \hline
+aabb & Accept & Equal count \\ \hline
+a & Reject & Missing b \\ \hline
+abb & Reject & Extra b \\ \hline
+\end{tabular}
+\end{center}
+
+% --------------------------------------------------------
+% Question 2 Results
+% --------------------------------------------------------
+\subsection{Results for Question 2}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+String & Result & Reason \\ \hline
+abbaaa & Accept & 2 b, 3 a \\ \hline
+abbbaaaa & Accept & n>2, m>3 \\ \hline
+abaaa & Reject & Only 1 b \\ \hline
+\end{tabular}
+\end{center}
+
+% Continue for all Questions …
+
+% --------------------------------------------------------
+% 5. DISCUSSION
+% --------------------------------------------------------
+\section{Discussion}
+
+This section contains per-question interpretation of correctness and conceptual insights.
+
+\subsection{Discussion for Question 1}
+
+The NPDA successfully models the matching requirement by using a stack to count \texttt{a}'s.  
+This highlights the limitations of finite automata and the necessity of PDAs for context-free languages.
+
+\subsection{Discussion for Question 2}
+
+The DFA structure ensures strict enforcement of symbol counts through state progression.  
+This shows how DFAs encode counting constraints through fixed sequences of states.
+
+% Continue similarly for Q3–Q26 …
+
+% --------------------------------------------------------
+% 6. COMPARATIVE ANALYSIS
+% --------------------------------------------------------
+\section{Comparative Analysis}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Model & Memory & Language Class & Example \\ \hline
+DFA & None & Regular & Ending with 0011 \\ \hline
+PDA & Stack & Context-Free & $a^n b^n$ \\ \hline
+TM & Infinite Tape & RE/Type-0 & $0^n1^n2^n$ \\ \hline
+\end{tabular}
+\end{center}
+
+% --------------------------------------------------------
+% 7. CONCLUSION
+% --------------------------------------------------------
+\section{Conclusion}
+
+This assignment demonstrated practical construction of automata across the Chomsky hierarchy.  
+Using JFLAP, each automaton was verified using both valid and invalid strings, confirming correctness and deepening understanding of language recognition models.
+
+% --------------------------------------------------------
+% 8. REFERENCES
+% --------------------------------------------------------
+\section{References}
+
+\begin{thebibliography}{9}
+\bibitem{hopcroft}
+Hopcroft, Motwani, Ullman. \textit{Introduction to Automata Theory, Languages, and Computation}.
+
+\bibitem{sipser}
+Sipser. \textit{Introduction to the Theory of Computation}.
+
+\bibitem{linz}
+Linz. \textit{Formal Languages and Automata}.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,43 @@
+1 2 3 4 5	12 13 14 15 16	29 30 24 25 26
+
+1.Design a non deterministic PDA for accepting the language L = {an bn | n>=1}
+
+2.Construct a DFA for L = {ab^n a^m : n ≥ 2, m ≥ 3}
+
+3.Draw a DFA for the language accepting strings ending with ‘0011’ over input
+alphabets ∑ = {0, 1}
+
+4.Construct npda’s that accept the following languages on Σ = {a, b, c}.
+L = {a^n b^m c^(n+m) : n ≥ 0, m ≥ 0}
+
+5.Construction of a minimal DFA accepting set of strings over {a, b} in which
+every ‘a’ is never be followed by ‘bb’.
+
+12.Construct an NFA that accepts the language {ab, abc}*. This is the set of strings
+where ab and abc may be repeated. Example strings include abcab, ababcab,
+abcabcabc, and the empty string
+
+13.Draw a DFA for the language accepting strings ending with ‘abb’ over input
+alphabets ∑ = {a, b}
+
+14.Draw a DFA for the language accepting strings ending with ‘abba’ over input
+alphabets ∑ = {a, b}
+
+15.Draw a deterministic and non-deterministic finite automata which accept a string
+containing “the” anywhere in a string of {a-z}, e.g., “there” but not “those”.
+
+16.Draw a deterministic and non-deterministic finite automata which accept a string
+containing “ing” at the end of a string in a string of {a-z}, e.g., “anything” but not
+“anywhere”.
+
+29.Design a Turing machine to accept a palindrome consisting of a’s and b’s of any
+length
+
+30.Construct a TM to accept the language L={ww^R |w€(a+b)*}
+
+24.Design a Turing Machine to accept the language L={ 0^n 1^n | n ≥ 1 }.
+
+25.Design a Turing Machine to accept the language L={ 0^n 1^n 2^n | n ≥ 1 }.
+
+26.Construct a Turing Machine to accept the language L={ w |w €(0+1)* }
+Containing the substring 001

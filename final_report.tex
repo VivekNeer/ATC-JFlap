@@ -1,0 +1,1660 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{xcolor}
+
+\geometry{a4paper, margin=1in}
+\graphicspath{{./images/}}
+
+\begin{document}
+\onehalfspacing
+
+\section{Introduction}
+This report presents the design and analysis of several computational models in the theory of computation, including Finite Automata (FA), Pushdown Automata (PDA), and Turing Machines (TM).
+For each language, appropriate computational models are constructed and verified using JFLAP.
+The report is organized so that \textbf{each question has its methodology, results, and discussion grouped under Sections 3, 4, and 5 respectively}.
+
+\section{Problem Statements}
+\begin{enumerate}
+    \item Design a NPDA for $L = \{ a^n b^n | n \ge 1 \}$
+    \item Construct DFA for $L = \{ a b^n a^m : n \ge 2, m \ge 3 \}$
+    \item DFA for strings ending with '0011', $\Sigma = \{0,1\}$
+    \item NPDA for $L = \{ a^n b^m c^{n+m} \}$
+    \item Minimal DFA where 'a' is never followed by 'bb'
+    \item[12.] NFA for $\{ab, abc\}^*$
+    \item[13.] DFA for strings ending with 'abb'
+    \item[14.] DFA for strings ending with 'abba'
+    \item[15.] DFA/NFA for strings containing ``the''
+    \item[16.] DFA/NFA for strings ending with ``ing''
+    \item[29.] TM accepting palindromes over $\{a,b\}$
+    \item[30.] TM accepting $\{ w w^R \}$
+    \item[24.] TM accepting $\{ 0^n 1^n \}$
+    \item[25.] TM accepting $\{ 0^n 1^n 2^n \}$
+    \item[26.] TM for strings containing substring 001
+\end{enumerate}
+
+\section{Methodology}
+This section details the construction approach for each question.
+
+\subsection{Methodology for Question 1}
+
+
+
+Design a non deterministic PDA for accepting the language $L = \{a^n b^n | n \ge 1\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Pushdown Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Click the \textbf{State Creator} tool (circle icon).
+    \item Click on the canvas to create 4 states: \texttt{q0}, \texttt{q1}, \texttt{q2}, \texttt{q3}.
+    \item Right-click \texttt{q0} and select \textbf{Initial}.
+    \item Right-click \texttt{q3} and select \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item Click the \textbf{Transition Creator} tool (arrow icon).
+    \item Create the following transitions (Input, Pop, Push):
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(a, Z, aZ)} (Push 'a' on 'Z')
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(a, a, aa)} (Push 'a' on 'a')
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(b, a, λ)} (Pop 'a' on 'b')
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(b, a, λ)} (Pop 'a' on 'b')
+    \item \texttt{q2} -> \texttt{q3}: \texttt{(λ, Z, Z)} (Accept if stack is empty of 'a's)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Go to \textbf{Input} -> \textbf{Step with Closure} or \textbf{Fast Run}.
+    \item Test with \texttt{aabb} (Accept), \texttt{ab} (Accept), \texttt{a} (Reject), \texttt{b} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save the file as \texttt{1.jff} in the \texttt{set\_1/1} folder.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q1_Screenshot_2025_11_28_203141.png}
+    \caption{Automaton for Question 1}
+\end{figure}
+
+\subsection{Methodology for Question 2}
+
+
+
+Construct a DFA for $L = \{ab^n a^m : n \ge 2, m \ge 3\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q6}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q6} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{a}
+    \item \texttt{q1} -> \texttt{q2}: \texttt{b}
+    \item \texttt{q2} -> \texttt{q3}: \texttt{b}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{b} (Loop for $n > 2$)
+    \item \texttt{q3} -> \texttt{q4}: \texttt{a}
+    \item \texttt{q4} -> \texttt{q5}: \texttt{a}
+    \item \texttt{q5} -> \texttt{q6}: \texttt{a}
+    \item \texttt{q6} -> \texttt{q6}: \texttt{a} (Loop for $m > 3$)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{abbaaa} (Accept), \texttt{abbbaaa} (Accept), \texttt{abbaaaa} (Accept).
+    \item Test with \texttt{abaaa} (Reject - only 1 b), \texttt{abbaa} (Reject - only 2 a's).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{2.jff} in \texttt{set\_1/2}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q2_image.png}
+    \caption{Automaton for Question 2}
+\end{figure}
+
+\subsection{Methodology for Question 3}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘0011’ over input alphabets $\Sigma = \{0, 1\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q4}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q4} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{0} (First '0')
+    \item \texttt{q0} -> \texttt{q0}: \texttt{1} (Reset)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{0} (Second '0')
+    \item \texttt{q1} -> \texttt{q0}: \texttt{1} (Reset)
+    \item \texttt{q2} -> \texttt{q3}: \texttt{1} (First '1')
+    \item \texttt{q2} -> \texttt{q2}: \texttt{0} (Stay on '00')
+    \item \texttt{q3} -> \texttt{q4}: \texttt{1} (Second '1' - Accept)
+    \item \texttt{q3} -> \texttt{q1}: \texttt{0} (Back to '0')
+    \item \texttt{q4} -> \texttt{q1}: \texttt{0} (Back to '0')
+    \item \texttt{q4} -> \texttt{q0}: \texttt{1} (Reset)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{0011} (Accept), \texttt{10011} (Accept), \texttt{00011} (Accept).
+    \item Test with \texttt{001} (Reject), \texttt{011} (Reject), \texttt{00110} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{3.jff} in \texttt{set\_1/3}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q3_image.png}
+    \caption{Automaton for Question 3}
+\end{figure}
+
+\subsection{Methodology for Question 4}
+
+
+
+Construct npda’s that accept the following languages on $\Sigma = \{a, b, c\}$.
+$L = \{a^n b^m c^{n+m} : n \ge 0, m \ge 0\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Pushdown Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q4}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q4} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(a, Z, aZ)} (Push first 'a')
+    \item \texttt{q0} -> \texttt{q2}: \texttt{(b, Z, bZ)} (Push first 'b' if no 'a's)
+    \item \texttt{q0} -> \texttt{q4}: \texttt{(λ, Z, Z)} (Accept empty string)
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(a, a, aa)} (Push 'a's)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(b, a, ba)} (Push first 'b' on 'a')
+    \item \texttt{q1} -> \texttt{q3}: \texttt{(c, a, λ)} (Pop 'a' for 'c' if no 'b's)
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(b, b, bb)} (Push 'b's)
+    \item \texttt{q2} -> \texttt{q3}: \texttt{(c, b, λ)} (Pop 'b' for 'c')
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(c, b, λ)} (Pop 'b's)
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(c, a, λ)} (Pop 'a's after 'b's are gone)
+    \item \texttt{q3} -> \texttt{q4}: \texttt{(λ, Z, Z)} (Accept if stack empty)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{abc} (Accept), \texttt{aabbcc} (Accept), \texttt{ac} (Accept), \texttt{bc} (Accept).
+    \item Test with \texttt{ab} (Reject), \texttt{abc} (Accept), \texttt{abcc} (Reject - too many c's), \texttt{aabc} (Reject - too few c's).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{4.jff} in \texttt{set\_1/4}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q4_image.png}
+    \caption{Automaton for Question 4}
+\end{figure}
+
+\subsection{Methodology for Question 5}
+
+
+
+Construction of a minimal DFA accepting set of strings over $\{a, b\}$ in which every ‘a’ is never be followed by ‘bb’.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0}, \texttt{q1}, \texttt{q2}, \texttt{q3}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q0}, \texttt{q1}, \texttt{q2} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q0}: \texttt{b} (Leading 'b's are fine)
+    \item \texttt{q0} -> \texttt{q1}: \texttt{a} (Found an 'a', start checking)
+    \item \texttt{q1} -> \texttt{q1}: \texttt{a} (Another 'a', reset check)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{b} (Found 'ab', warning)
+    \item \texttt{q2} -> \texttt{q1}: \texttt{a} (Found 'aba', safe, reset check)
+    \item \texttt{q2} -> \texttt{q3}: \texttt{b} (Found 'abb', Reject)
+    \item \texttt{q3} -> \texttt{q3}: \texttt{a} (Trap)
+    \item \texttt{q3} -> \texttt{q3}: \texttt{b} (Trap)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{ab} (Accept), \texttt{aba} (Accept), \texttt{bba} (Accept), \texttt{aab} (Accept).
+    \item Test with \texttt{abb} (Reject), \texttt{aabb} (Reject), \texttt{babb} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{5.jff} in \texttt{set\_1/5}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q5_image.png}
+    \caption{Automaton for Question 5}
+\end{figure}
+
+\subsection{Methodology for Question 12}
+
+
+
+Construct an NFA that accepts the language $\{ab, abc\}^*$. This is the set of strings where ab and abc may be repeated. Example strings include abcab, ababcab, abcabcabc, and the empty string.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q4}.
+    \item Set \texttt{q0} as \textbf{Initial} and \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{a} (Start of 'ab' or 'abc')
+    \item \texttt{q1} -> \texttt{q0}: \texttt{b} (Completes 'ab', back to start)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{b} (Part of 'abc')
+    \item \texttt{q2} -> \texttt{q0}: \texttt{c} (Completes 'abc', back to start)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{ab} (Accept), \texttt{abc} (Accept), \texttt{abab} (Accept), \texttt{abcab} (Accept), \texttt{ababc} (Accept).
+    \item Test with \texttt{a} (Reject), \texttt{ac} (Reject), \texttt{abb} (Reject), \texttt{abca} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{12.jff} in \texttt{set\_2/12}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q12_image.png}
+    \caption{Automaton for Question 12}
+\end{figure}
+
+\subsection{Methodology for Question 13}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘abb’ over input alphabets $\Sigma = \{a, b\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q3}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q3} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{a} (First 'a')
+    \item \texttt{q0} -> \texttt{q0}: \texttt{b} (Reset)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{b} (First 'b')
+    \item \texttt{q1} -> \texttt{q1}: \texttt{a} (Stay on 'a')
+    \item \texttt{q2} -> \texttt{q3}: \texttt{b} (Second 'b' - Accept)
+    \item \texttt{q2} -> \texttt{q1}: \texttt{a} (Back to 'a')
+    \item \texttt{q3} -> \texttt{q0}: \texttt{b} (Reset)
+    \item \texttt{q3} -> \texttt{q1}: \texttt{a} (Back to 'a')
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{abb} (Accept), \texttt{aabb} (Accept), \texttt{babb} (Accept).
+    \item Test with \texttt{ab} (Reject), \texttt{ba} (Reject), \texttt{abba} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{13.jff} in \texttt{set\_2/13}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q13_image.png}
+    \caption{Automaton for Question 13}
+\end{figure}
+
+\subsection{Methodology for Question 14}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘abba’ over input alphabets $\Sigma = \{a, b\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q4}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q4} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{a} (First 'a')
+    \item \texttt{q0} -> \texttt{q0}: \texttt{b} (Reset)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{b} (First 'b')
+    \item \texttt{q1} -> \texttt{q1}: \texttt{a} (Stay on 'a')
+    \item \texttt{q2} -> \texttt{q3}: \texttt{b} (Second 'b')
+    \item \texttt{q2} -> \texttt{q1}: \texttt{a} (Back to 'a')
+    \item \texttt{q3} -> \texttt{q4}: \texttt{a} (Second 'a' - Accept)
+    \item \texttt{q3} -> \texttt{q0}: \texttt{b} (Reset)
+    \item \texttt{q4} -> \texttt{q1}: \texttt{a} (Overlap 'a')
+    \item \texttt{q4} -> \texttt{q2}: \texttt{b} (Overlap 'ab')
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{abba} (Accept), \texttt{aabba} (Accept), \texttt{babba} (Accept).
+    \item Test with \texttt{abb} (Reject), \texttt{aba} (Reject), \texttt{abbab} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{14.jff} in \texttt{set\_2/14}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q14_image.png}
+    \caption{Automaton for Question 14}
+\end{figure}
+
+\subsection{Methodology for Question 15}
+
+
+
+Draw a deterministic and non-deterministic finite automata which accept a string containing “the” anywhere in a string of {a-z}, e.g., “there” but not “those”.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q3}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q3} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{t}
+    \item \texttt{q0} -> \texttt{q0}: \texttt{[a-z] - {t}} (Any other letter)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{h}
+    \item \texttt{q1} -> \texttt{q1}: \texttt{t} (Stay on 't')
+    \item \texttt{q1} -> \texttt{q0}: \texttt{[a-z] - {t, h}} (Reset)
+    \item \texttt{q2} -> \texttt{q3}: \texttt{e} (Found "the")
+    \item \texttt{q2} -> \texttt{q1}: \texttt{t} (Back to 't')
+    \item \texttt{q2} -> \texttt{q0}: \texttt{[a-z] - {t, e}} (Reset)
+    \item \texttt{q3} -> \texttt{q3}: \texttt{[a-z]} (Loop forever once found)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{there} (Accept), \texttt{breathe} (Accept), \texttt{the} (Accept).
+    \item Test with \texttt{those} (Reject), \texttt{teh} (Reject), \texttt{th} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{15.jff} in \texttt{set\_2/15}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q15_image.png}
+    \caption{Automaton for Question 15}
+\end{figure}
+
+\subsection{Methodology for Question 16}
+
+
+
+Draw a deterministic and non-deterministic finite automata which accept a string containing “ing” at the end of a string in a string of {a-z}, e.g., “anything” but not “anywhere”.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Finite Automaton}.
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q3}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q3} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \texttt{q0} -> \texttt{q1}: \texttt{i}
+    \item \texttt{q0} -> \texttt{q0}: \texttt{[a-z] - {i}} (Reset)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{n}
+    \item \texttt{q1} -> \texttt{q1}: \texttt{i} (Stay on 'i')
+    \item \texttt{q1} -> \texttt{q0}: \texttt{[a-z] - {i, n}} (Reset)
+    \item \texttt{q2} -> \texttt{q3}: \texttt{g} (Found "ing" at end)
+    \item \texttt{q2} -> \texttt{q1}: \texttt{i} (Back to 'i')
+    \item \texttt{q2} -> \texttt{q0}: \texttt{[a-z] - {i, g}} (Reset)
+    \item \texttt{q3} -> \texttt{q1}: \texttt{i} (Overlap 'i')
+    \item \texttt{q3} -> \texttt{q0}: \texttt{[a-z] - {i}} (Reset, since it must be at the end)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{anything} (Accept), \texttt{sing} (Accept), \texttt{going} (Accept).
+    \item Test with \texttt{anywhere} (Reject), \texttt{in} (Reject), \texttt{singer} (Reject - 'ing' is not at end).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{16.jff} in \texttt{set\_2/16}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q16_image.png}
+    \caption{Automaton for Question 16}
+\end{figure}
+
+\subsection{Methodology for Question 29}
+
+
+
+Design a Turing machine to accept a palindrome consisting of a’s and b’s of any length.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Turing Machine} (Single Tape).
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q6}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q6} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \textbf{Start}:
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(a, \square, R)} (Read 'a', mark as blank, move Right)
+    \item \texttt{q0} -> \texttt{q4}: \texttt{(b, \square, R)} (Read 'b', mark as blank, move Right)
+    \item \texttt{q0} -> \texttt{q6}: \texttt{(\square, \square, S)} (Empty string is palindrome, Accept)
+    \item \textbf{Move Right (after 'a')}:
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(a, a, R)}
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(b, b, R)}
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(\square, \square, L)} (Found end, move Left)
+    \item \textbf{Match End (for 'a')}:
+    \item \texttt{q2} -> \texttt{q3}: \texttt{(a, \square, L)} (Match 'a', mark blank, move Left)
+    \item \texttt{q2} -> \texttt{q6}: \texttt{(\square, \square, S)} (Single 'a' left, Accept)
+    \item \textbf{Return Left}:
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(a, a, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(b, b, L)}
+    \item \texttt{q3} -> \texttt{q0}: \texttt{(\square, \square, R)} (Back to start)
+    \item \textbf{Move Right (after 'b')}:
+    \item \texttt{q4} -> \texttt{q4}: \texttt{(a, a, R)}
+    \item \texttt{q4} -> \texttt{q4}: \texttt{(b, b, R)}
+    \item \texttt{q4} -> \texttt{q5}: \texttt{(\square, \square, L)} (Found end, move Left)
+    \item \textbf{Match End (for 'b')}:
+    \item \texttt{q5} -> \texttt{q3}: \texttt{(b, \square, L)} (Match 'b', mark blank, move Left)
+    \item \texttt{q5} -> \texttt{q6}: \texttt{(\square, \square, S)} (Single 'b' left, Accept)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{aba} (Accept), \texttt{abba} (Accept), \texttt{a} (Accept), \texttt{b} (Accept).
+    \item Test with \texttt{ab} (Reject), \texttt{abb} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{29.jff} in \texttt{set\_3/29}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q29_image.png}
+    \caption{Automaton for Question 29}
+\end{figure}
+
+\subsection{Methodology for Question 30}
+
+
+
+Construct a TM to accept the language $L=\{ww^R |w \in (a+b)^*\}$
+
+
+1. Open JFLAP.
+2. Click on \textbf{Turing Machine} (Single Tape).
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q6}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q6} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item This is essentially the same as the even-length palindrome logic, but strictly $ww^R$ implies even length.
+    \item \textbf{Start}:
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(a, \square, R)}
+    \item \texttt{q0} -> \texttt{q4}: \texttt{(b, \square, R)}
+    \item \texttt{q0} -> \texttt{q6}: \texttt{(\square, \square, S)} (Empty string is $ww^R$ where $w=\epsilon$)
+    \item \textbf{Move Right (after 'a')}:
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(a, a, R)}
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(b, b, R)}
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(\square, \square, L)}
+    \item \textbf{Match End (for 'a')}:
+    \item \texttt{q2} -> \texttt{q3}: \texttt{(a, \square, L)}
+    \item \textbf{Return Left}:
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(a, a, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(b, b, L)}
+    \item \texttt{q3} -> \texttt{q0}: \texttt{(\square, \square, R)}
+    \item \textbf{Move Right (after 'b')}:
+    \item \texttt{q4} -> \texttt{q4}: \texttt{(a, a, R)}
+    \item \texttt{q4} -> \texttt{q4}: \texttt{(b, b, R)}
+    \item \texttt{q4} -> \texttt{q5}: \texttt{(\square, \square, L)}
+    \item \textbf{Match End (for 'b')}:
+    \item \texttt{q5} -> \texttt{q3}: \texttt{(b, \square, L)}
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{abba} (Accept), \texttt{aaaa} (Accept), \texttt{bbaabb} (Accept).
+    \item Test with \texttt{aba} (Reject - odd length), \texttt{ab} (Reject), \texttt{a} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{30.jff} in \texttt{set\_3/30}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q30_image.png}
+    \caption{Automaton for Question 30}
+\end{figure}
+
+\subsection{Methodology for Question 24}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n | n \ge 1 \}$.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Turing Machine} (Single Tape).
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q4}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q4} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \textbf{Start}:
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(0, X, R)} (Mark '0' with 'X', move Right)
+    \item \texttt{q0} -> \texttt{q4}: \texttt{(Y, Y, R)} (If all 0s marked, check for completion)
+    \item \textbf{Find Matching 1}:
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(0, 0, R)} (Skip 0s)
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(Y, Y, R)} (Skip Ys)
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(1, Y, L)} (Found matching '1', mark with 'Y', move Left)
+    \item \textbf{Return to Start}:
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(0, 0, L)}
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(Y, Y, L)}
+    \item \texttt{q2} -> \texttt{q0}: \texttt{(X, X, R)} (Back to start after X)
+    \item \textbf{Final Check}:
+    \item \texttt{q0} -> \texttt{q3}: \texttt{(Y, Y, R)} (All 0s handled, ensure no extra 1s)
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(Y, Y, R)}
+    \item \texttt{q3} -> \texttt{q4}: \texttt{(\square, \square, S)} (Accept)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{01} (Accept), \texttt{0011} (Accept), \texttt{000111} (Accept).
+    \item Test with \texttt{001} (Reject), \texttt{011} (Reject), \texttt{0} (Reject), \texttt{1} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{24.jff} in \texttt{set\_3/24}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q24_image.png}
+    \caption{Automaton for Question 24}
+\end{figure}
+
+\subsection{Methodology for Question 25}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n 2^n | n \ge 1 \}$.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Turing Machine} (Single Tape).
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q6}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q6} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \textbf{Start}:
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(0, X, R)} (Mark '0', move Right)
+    \item \texttt{q0} -> \texttt{q5}: \texttt{(Y, Y, R)} (If all 0s marked, check for completion)
+    \item \textbf{Find Matching 1}:
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(0, 0, R)}
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(Y, Y, R)}
+    \item \texttt{q1} -> \texttt{q2}: \texttt{(1, Y, R)} (Found '1', mark 'Y', move Right)
+    \item \textbf{Find Matching 2}:
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(1, 1, R)}
+    \item \texttt{q2} -> \texttt{q2}: \texttt{(Z, Z, R)}
+    \item \texttt{q2} -> \texttt{q3}: \texttt{(2, Z, L)} (Found '2', mark 'Z', move Left)
+    \item \textbf{Return to Start}:
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(0, 0, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(1, 1, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(2, 2, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(Y, Y, L)}
+    \item \texttt{q3} -> \texttt{q3}: \texttt{(Z, Z, L)}
+    \item \texttt{q3} -> \texttt{q0}: \texttt{(X, X, R)} (Back to start)
+    \item \textbf{Final Check}:
+    \item \texttt{q5} -> \texttt{q5}: \texttt{(Y, Y, R)}
+    \item \texttt{q5} -> \texttt{q5}: \texttt{(Z, Z, R)}
+    \item \texttt{q5} -> \texttt{q6}: \texttt{(\square, \square, S)} (Accept)
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{012} (Accept), \texttt{001122} (Accept).
+    \item Test with \texttt{01} (Reject), \texttt{0122} (Reject), \texttt{0012} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{25.jff} in \texttt{set\_3/25}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q25_image.png}
+    \caption{Automaton for Question 25}
+\end{figure}
+
+\subsection{Methodology for Question 26}
+
+
+
+Construct a Turing Machine to accept the language $L=\{ w |w \in (0+1)^* \}$ Containing the substring 001.
+
+
+1. Open JFLAP.
+2. Click on \textbf{Turing Machine} (Single Tape).
+3. \textbf{Add States}:
+\begin{itemize}
+    \item Create states \texttt{q0} to \texttt{q3}.
+    \item Set \texttt{q0} as \textbf{Initial}.
+    \item Set \texttt{q3} as \textbf{Final}.
+\end{itemize}
+4. \textbf{Define Transitions}:
+\begin{itemize}
+    \item \textbf{Scan Right}:
+    \item \texttt{q0} -> \texttt{q0}: \texttt{(1, 1, R)} (Skip 1s)
+    \item \texttt{q0} -> \texttt{q1}: \texttt{(0, 0, R)} (Found first '0')
+    \item \texttt{q1} -> \texttt{q1}: \texttt{(0, 0, R)} (Found second '0', stay in q1/q2 logic) - \textit{Correction}: Better to have distinct states for '0', '00'.
+    \item Let's refine:
+    \item \texttt{q0} (Start):
+    \item \texttt{1} -> \texttt{q0}, R
+    \item \texttt{0} -> \texttt{q1}, R
+    \item \texttt{q1} (Saw '0'):
+    \item \texttt{1} -> \texttt{q0}, R (Reset)
+    \item \texttt{0} -> \texttt{q2}, R (Saw '00')
+    \item \texttt{q2} (Saw '00'):
+    \item \texttt{0} -> \texttt{q2}, R (Stay in '00' state, e.g. '000')
+    \item \texttt{1} -> \texttt{q3}, R (Saw '001', Accept)
+    \item \texttt{q3} (Accept):
+    \item \texttt{0} -> \texttt{q3}, R
+    \item \texttt{1} -> \texttt{q3}, R
+    \item \texttt{\square} -> \texttt{q3}, S
+\end{itemize}
+5. \textbf{Verify}:
+\begin{itemize}
+    \item Test with \texttt{001} (Accept), \texttt{1001} (Accept), \texttt{0001} (Accept).
+    \item Test with \texttt{00} (Reject), \texttt{01} (Reject), \texttt{111} (Reject).
+\end{itemize}
+6. \textbf{Save}:
+\begin{itemize}
+    \item Save as \texttt{26.jff} in \texttt{set\_3/26}.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q26_image.png}
+    \caption{Automaton for Question 26}
+\end{figure}
+
+\clearpage
+
+\section{Results}
+This section presents acceptance tables and correctness verification for each question.
+
+\subsection{Results for Question 1}
+
+
+
+Design a non deterministic PDA for accepting the language $L = \{a^n b^n | n \ge 1\}$
+
+\subsubsection*{Description}
+The PDA works by pushing 'a's onto the stack. When the first 'b' is encountered, it switches state and begins popping 'a's for each 'b'. If the stack is empty (only bottom marker Z remains) after processing all input, the string is accepted.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start state. Transitions to \texttt{q1} on first 'a'.
+    \item \texttt{q1}: Pushes 'a's.
+    \item \texttt{q2}: Pops 'a's on 'b's.
+    \item \texttt{q3}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a, Z) = \{(q1, aZ)\}$
+    \item $\delta(q1, a, a) = \{(q1, aa)\}$
+    \item $\delta(q1, b, a) = \{(q2, \lambda)\}$
+    \item $\delta(q2, b, a) = \{(q2, \lambda)\}$
+    \item $\delta(q2, \lambda, Z) = \{(q3, Z)\}$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{ab} & \textbf{Accept} & 1 'a', 1 'b'. Stack matches. \\ \hline
+\texttt{aabb} & \textbf{Accept} & 2 'a's, 2 'b's. \\ \hline
+\texttt{aaabbb} & \textbf{Accept} & 3 'a's, 3 'b's. \\ \hline
+\texttt{a} & \textbf{Reject} & Missing 'b'. \\ \hline
+\texttt{b} & \textbf{Reject} & Missing 'a'. \\ \hline
+\texttt{aabbb} & \textbf{Reject} & More 'b's than 'a's. \\ \hline
+\texttt{aaabb} & \textbf{Reject} & More 'a's than 'b's. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 2}
+
+
+
+Construct a DFA for $L = \{ab^n a^m : n \ge 2, m \ge 3\}$
+
+\subsubsection*{Description}
+The DFA accepts strings starting with a single 'a', followed by at least two 'b's, and ending with at least three 'a's.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Expects 'a'.
+    \item \texttt{q1}: Expects first 'b'.
+    \item \texttt{q2}: Expects second 'b'.
+    \item \texttt{q3}: Satisfied $n \ge 2$. Loops on 'b'. Expects first 'a' of suffix.
+    \item \texttt{q4}: Expects second 'a'.
+    \item \texttt{q5}: Expects third 'a'.
+    \item \texttt{q6}: Final state. Satisfied $m \ge 3$. Loops on 'a'.
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a) = q1$
+    \item $\delta(q1, b) = q2$
+    \item $\delta(q2, b) = q3$
+    \item $\delta(q3, b) = q3$
+    \item $\delta(q3, a) = q4$
+    \item $\delta(q4, a) = q5$
+    \item $\delta(q5, a) = q6$
+    \item $\delta(q6, a) = q6$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abbaaa} & \textbf{Accept} & Min requirement: 1 a, 2 b's, 3 a's. \\ \hline
+\texttt{abbbaaa} & \textbf{Accept} & 3 b's ($n=3$), 3 a's. \\ \hline
+\texttt{abbaaaa} & \textbf{Accept} & 2 b's, 4 a's ($m=4$). \\ \hline
+\texttt{abaaa} & \textbf{Reject} & Only 1 b ($n=1 < 2$). \\ \hline
+\texttt{abbaa} & \textbf{Reject} & Only 2 a's ($m=2 < 3$). \\ \hline
+\texttt{bbaaa} & \textbf{Reject} & Starts with b. \\ \hline
+\texttt{abbaaba} & \textbf{Reject} & 'b' after 'a's. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 3}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘0011’ over input alphabets $\Sigma = \{0, 1\}$
+
+\subsubsection*{Description}
+The DFA tracks the progress towards the suffix '0011'. Any interruption resets the state to the appropriate prefix match.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No prefix matched.
+    \item \texttt{q1}: Matched '0'.
+    \item \texttt{q2}: Matched '00'.
+    \item \texttt{q3}: Matched '001'.
+    \item \texttt{q4}: Matched '0011' (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input 0} & \textbf{Input 1} \\ \hline
+\textbf{q0} & q1 & q0 \\ \hline
+\textbf{q1} & q2 & q0 \\ \hline
+\textbf{q2} & q2 & q3 \\ \hline
+\textbf{q3} & q1 & q4 \\ \hline
+\textbf{q4} & q1 & q0 \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{0011} & \textbf{Accept} & Ends with 0011. \\ \hline
+\texttt{110011} & \textbf{Accept} & Ends with 0011. \\ \hline
+\texttt{00011} & \textbf{Accept} & Ends with 0011. \\ \hline
+\texttt{001} & \textbf{Reject} & Incomplete suffix. \\ \hline
+\texttt{00110} & \textbf{Reject} & Ends with 0, not 1. \\ \hline
+\texttt{011} & \textbf{Reject} & Missing leading 0s. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 4}
+
+
+
+Construct npda’s that accept the following languages on $\Sigma = \{a, b, c\}$.
+$L = \{a^n b^m c^{n+m} : n \ge 0, m \ge 0\}$
+
+\subsubsection*{Description}
+The PDA pushes 'a's and then 'b's onto the stack. For every 'c' encountered, it pops one symbol from the stack. Since 'b's are pushed after 'a's, they are popped first. The total number of 'c's must equal the total number of 'a's and 'b's combined.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Handles empty string or transitions to pushing states.
+    \item \texttt{q1}: Pushes 'a's.
+    \item \texttt{q2}: Pushes 'b's.
+    \item \texttt{q3}: Pops symbols ('b's then 'a's) for each 'c'.
+    \item \texttt{q4}: Final state.
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, \lambda, Z) = \{(q4, Z)\}$ (Accept $\epsilon$)
+    \item $\delta(q0, a, Z) = \{(q1, aZ)\}$
+    \item $\delta(q0, b, Z) = \{(q2, bZ)\}$
+    \item $\delta(q1, a, a) = \{(q1, aa)\}$
+    \item $\delta(q1, b, a) = \{(q2, ba)\}$
+    \item $\delta(q1, c, a) = \{(q3, \lambda)\}$
+    \item $\delta(q2, b, b) = \{(q2, bb)\}$
+    \item $\delta(q2, c, b) = \{(q3, \lambda)\}$
+    \item $\delta(q3, c, b) = \{(q3, \lambda)\}$
+    \item $\delta(q3, c, a) = \{(q3, \lambda)\}$
+    \item $\delta(q3, \lambda, Z) = \{(q4, Z)\}$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abc} & \textbf{Accept} & 1 a + 1 b = 2 c's. \\ \hline
+\texttt{aabbcc} & \textbf{Accept} & 2 a + 2 b = 4 c's. \\ \hline
+\texttt{ac} & \textbf{Accept} & 1 a + 0 b = 1 c. \\ \hline
+\texttt{bc} & \textbf{Accept} & 0 a + 1 b = 1 c. \\ \hline
+\texttt{ab} & \textbf{Reject} & Missing c's. \\ \hline
+\texttt{aabc} & \textbf{Reject} & 2 a + 1 b != 1 c. \\ \hline
+\texttt{abcc} & \textbf{Reject} & 1 a + 1 b != 2 c's. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 5}
+
+
+
+Construction of a minimal DFA accepting set of strings over $\{a, b\}$ in which every ‘a’ is never be followed by ‘bb’.
+
+\subsubsection*{Description}
+The DFA rejects any string containing the substring "abb". It accepts all other strings.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Safe state.
+    \item \texttt{q1}: Just saw 'a'.
+    \item \texttt{q2}: Just saw 'ab'.
+    \item \texttt{q3}: Saw 'abb' (Trap state).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input a} & \textbf{Input b} \\ \hline
+\textbf{q0} & q1 & q0 \\ \hline
+\textbf{q1} & q1 & q2 \\ \hline
+\textbf{q2} & q1 & q3 \\ \hline
+\textbf{q3} & q3 & q3 \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{ab} & \textbf{Accept} & 'a' followed by single 'b'. \\ \hline
+\texttt{aba} & \textbf{Accept} & 'a' followed by 'b' then 'a'. \\ \hline
+\texttt{bba} & \textbf{Accept} & No 'a' before 'bb'. \\ \hline
+\texttt{aab} & \textbf{Accept} & 'a' followed by 'a' then 'b'. \\ \hline
+\texttt{abb} & \textbf{Reject} & Contains 'abb'. \\ \hline
+\texttt{aabb} & \textbf{Reject} & Contains 'abb'. \\ \hline
+\texttt{babb} & \textbf{Reject} & Contains 'abb'. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 12}
+
+
+
+Construct an NFA that accepts the language $\{ab, abc\}^*$.
+
+\subsubsection*{Description}
+The NFA accepts strings formed by concatenating 'ab' and 'abc' any number of times. The start state is also the final state to accept the empty string.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start/Final state. Ready to process next 'ab' or 'abc'.
+    \item \texttt{q1}: Saw 'a'. Could be start of 'ab' or 'abc'.
+    \item \texttt{q2}: Saw 'ab' (as prefix of 'abc').
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a) = \{q1\}$
+    \item $\delta(q1, b) = \{q0, q2\}$ (Nondeterminism here: return to q0 for 'ab', or go to q2 for 'abc')
+    \item $\delta(q2, c) = \{q0\}$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{ab} & \textbf{Accept} & Matches 'ab'. \\ \hline
+\texttt{abc} & \textbf{Accept} & Matches 'abc'. \\ \hline
+\texttt{abcab} & \textbf{Accept} & Matches 'abc' then 'ab'. \\ \hline
+\texttt{ababc} & \textbf{Accept} & Matches 'ab' then 'abc'. \\ \hline
+\texttt{a} & \textbf{Reject} & Incomplete. \\ \hline
+\texttt{ac} & \textbf{Reject} & Invalid sequence. \\ \hline
+\texttt{abb} & \textbf{Reject} & 'ab' followed by 'b' is invalid. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 13}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘abb’ over input alphabets $\Sigma = \{a, b\}$
+
+\subsubsection*{Description}
+The DFA tracks the suffix 'abb'.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No prefix matched.
+    \item \texttt{q1}: Matched 'a'.
+    \item \texttt{q2}: Matched 'ab'.
+    \item \texttt{q3}: Matched 'abb' (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input a} & \textbf{Input b} \\ \hline
+\textbf{q0} & q1 & q0 \\ \hline
+\textbf{q1} & q1 & q2 \\ \hline
+\textbf{q2} & q1 & q3 \\ \hline
+\textbf{q3} & q1 & q0 \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abb} & \textbf{Accept} & Ends with abb. \\ \hline
+\texttt{aabb} & \textbf{Accept} & Ends with abb. \\ \hline
+\texttt{babb} & \textbf{Accept} & Ends with abb. \\ \hline
+\texttt{ab} & \textbf{Reject} & Incomplete suffix. \\ \hline
+\texttt{abba} & \textbf{Reject} & Ends with a. \\ \hline
+\texttt{abbb} & \textbf{Reject} & Ends with bbb. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 14}
+
+
+
+Draw a DFA for the language accepting strings ending with ‘abba’ over input alphabets $\Sigma = \{a, b\}$
+
+\subsubsection*{Description}
+The DFA tracks the suffix 'abba'.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No prefix matched.
+    \item \texttt{q1}: Matched 'a'.
+    \item \texttt{q2}: Matched 'ab'.
+    \item \texttt{q3}: Matched 'abb'.
+    \item \texttt{q4}: Matched 'abba' (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input a} & \textbf{Input b} \\ \hline
+\textbf{q0} & q1 & q0 \\ \hline
+\textbf{q1} & q1 & q2 \\ \hline
+\textbf{q2} & q1 & q3 \\ \hline
+\textbf{q3} & q4 & q0 \\ \hline
+\textbf{q4} & q1 & q2 \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abba} & \textbf{Accept} & Ends with abba. \\ \hline
+\texttt{aabba} & \textbf{Accept} & Ends with abba. \\ \hline
+\texttt{babba} & \textbf{Accept} & Ends with abba. \\ \hline
+\texttt{abb} & \textbf{Reject} & Incomplete suffix. \\ \hline
+\texttt{abbab} & \textbf{Reject} & Ends with b. \\ \hline
+\texttt{abbb} & \textbf{Reject} & Ends with bbb. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 15}
+
+
+
+Draw a deterministic and non-deterministic finite automata which accept a string containing “the” anywhere in a string of {a-z}.
+
+\subsubsection*{Description}
+The DFA looks for the substring "the". Once found, it enters a final state and stays there.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No part of "the" matched.
+    \item \texttt{q1}: Matched 't'.
+    \item \texttt{q2}: Matched 'th'.
+    \item \texttt{q3}: Matched "the" (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input t} & \textbf{Input h} & \textbf{Input e} & \textbf{Other [a-z]} \\ \hline
+\textbf{q0} & q1 & q0 & q0 & q0 \\ \hline
+\textbf{q1} & q1 & q2 & q0 & q0 \\ \hline
+\textbf{q2} & q1 & q0 & q3 & q0 \\ \hline
+\textbf{q3} & q3 & q3 & q3 & q3 \\ \hline
+\end{tabular}%
+}
+\end{center}
+
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{there} & \textbf{Accept} & Contains "the". \\ \hline
+\texttt{breathe} & \textbf{Accept} & Contains "the". \\ \hline
+\texttt{the} & \textbf{Accept} & Is "the". \\ \hline
+\texttt{those} & \textbf{Reject} & "tho", not "the". \\ \hline
+\texttt{teh} & \textbf{Reject} & "teh", not "the". \\ \hline
+\texttt{th} & \textbf{Reject} & Incomplete. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 16}
+
+
+
+Draw a deterministic and non-deterministic finite automata which accept a string containing “ing” at the end of a string in a string of {a-z}.
+
+\subsubsection*{Description}
+The DFA tracks the suffix "ing". It is similar to seeking a substring, but if any character follows "ing", it must reset or partially reset to ensure "ing" is the \textit{very last} thing.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No prefix matched.
+    \item \texttt{q1}: Matched 'i'.
+    \item \texttt{q2}: Matched 'in'.
+    \item \texttt{q3}: Matched "ing" (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|}
+\hline
+\textbf{State} & \textbf{Input i} & \textbf{Input n} & \textbf{Input g} & \textbf{Other [a-z]} \\ \hline
+\textbf{q0} & q1 & q0 & q0 & q0 \\ \hline
+\textbf{q1} & q1 & q2 & q0 & q0 \\ \hline
+\textbf{q2} & q1 & q0 & q3 & q0 \\ \hline
+\textbf{q3} & q1 & q0 & q0 & q0 \\ \hline
+\end{tabular}%
+}
+\end{center}
+
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{anything} & \textbf{Accept} & Ends with "ing". \\ \hline
+\texttt{sing} & \textbf{Accept} & Ends with "ing". \\ \hline
+\texttt{going} & \textbf{Accept} & Ends with "ing". \\ \hline
+\texttt{anywhere} & \textbf{Reject} & Ends with "ere". \\ \hline
+\texttt{singer} & \textbf{Reject} & Ends with "er". \\ \hline
+\texttt{in} & \textbf{Reject} & Incomplete. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 29}
+
+
+
+Design a Turing machine to accept a palindrome consisting of a’s and b’s of any length.
+
+\subsubsection*{Description}
+The TM matches the first character with the last character, erasing both. It repeats this process until the string is empty or has one character left.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Reads first char.
+    \item \texttt{q1}: Moves right to find end (after reading 'a').
+    \item \texttt{q2}: Checks last char (expecting 'a').
+    \item \texttt{q3}: Returns to start (moving left).
+    \item \texttt{q4}: Moves right to find end (after reading 'b').
+    \item \texttt{q5}: Checks last char (expecting 'b').
+    \item \texttt{q6}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a) = (q1, \square, R)$
+    \item $\delta(q0, b) = (q4, \square, R)$
+    \item $\delta(q0, \square) = (q6, \square, S)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{aba} & \textbf{Accept} & Palindrome. \\ \hline
+\texttt{abba} & \textbf{Accept} & Palindrome. \\ \hline
+\texttt{a} & \textbf{Accept} & Single char is palindrome. \\ \hline
+\texttt{ab} & \textbf{Reject} & Ends don't match. \\ \hline
+\texttt{abb} & \textbf{Reject} & Ends don't match. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 30}
+
+
+
+Construct a TM to accept the language $L=\{ww^R |w \in (a+b)^*\}$
+
+\subsubsection*{Description}
+This language represents even-length palindromes. The TM matches the first and last characters, erasing them, and repeats. It rejects odd-length strings (unlike the general palindrome TM which accepts the last single character).
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Reads first char.
+    \item \texttt{q1}: Moves right to find end (after reading 'a').
+    \item \texttt{q2}: Checks last char (expecting 'a').
+    \item \texttt{q3}: Returns to start.
+    \item \texttt{q4}: Moves right to find end (after reading 'b').
+    \item \texttt{q5}: Checks last char (expecting 'b').
+    \item \texttt{q6}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a) = (q1, \square, R)$
+    \item $\delta(q0, b) = (q4, \square, R)$
+    \item $\delta(q0, \square) = (q6, \square, S)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abba} & \textbf{Accept} & $w=ab, w^R=ba$. \\ \hline
+\texttt{aaaa} & \textbf{Accept} & $w=aa, w^R=aa$. \\ \hline
+\texttt{aba} & \textbf{Reject} & Odd length. \\ \hline
+\texttt{ab} & \textbf{Reject} & Not a palindrome. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 24}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n | n \ge 1 \}$.
+
+\subsubsection*{Description}
+The TM marks '0's with 'X' and corresponding '1's with 'Y'. It zig-zags between the beginning of the 0s and the beginning of the 1s.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Marks next '0'.
+    \item \texttt{q1}: Moves right to find first '1'.
+    \item \texttt{q2}: Moves left to find last 'X'.
+    \item \texttt{q3}: Checks if any '1's remain after all '0's are marked.
+    \item \texttt{q4}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 0) = (q1, X, R)$
+    \item $\delta(q1, 1) = (q2, Y, L)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{01} & \textbf{Accept} & 1 zero, 1 one. \\ \hline
+\texttt{0011} & \textbf{Accept} & 2 zeros, 2 ones. \\ \hline
+\texttt{001} & \textbf{Reject} & More zeros. \\ \hline
+\texttt{011} & \textbf{Reject} & More ones. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 25}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n 2^n | n \ge 1 \}$.
+
+\subsubsection*{Description}
+The TM marks '0' with 'X', finds the first '1' and marks it 'Y', then finds the first '2' and marks it 'Z'. It repeats this cycle.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Marks next '0'.
+    \item \texttt{q1}: Moves right to find first '1'.
+    \item \texttt{q2}: Moves right to find first '2'.
+    \item \texttt{q3}: Moves left to find last 'X'.
+    \item \texttt{q5}: Checks if any '1's or '2's remain after all '0's are marked.
+    \item \texttt{q6}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 0) = (q1, X, R)$
+    \item $\delta(q1, 1) = (q2, Y, R)$
+    \item $\delta(q2, 2) = (q3, Z, L)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{012} & \textbf{Accept} & 1 of each. \\ \hline
+\texttt{001122} & \textbf{Accept} & 2 of each. \\ \hline
+\texttt{01} & \textbf{Reject} & Missing 2. \\ \hline
+\texttt{0122} & \textbf{Reject} & Extra 2. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 26}
+
+
+
+Construct a Turing Machine to accept the language $L=\{ w |w \in (0+1)^* \}$ Containing the substring 001.
+
+\subsubsection*{Description}
+The TM scans the tape from left to right looking for the sequence '001'. Once found, it enters a final state and halts (or loops in final state).
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No part of '001' matched.
+    \item \texttt{q1}: Matched '0'.
+    \item \texttt{q2}: Matched '00'.
+    \item \texttt{q3}: Matched '001' (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 1) = (q0, 1, R)$
+    \item $\delta(q0, 0) = (q1, 0, R)$
+    \item $\delta(q1, 1) = (q0, 1, R)$
+    \item $\delta(q1, 0) = (q2, 0, R)$
+    \item $\delta(q2, 0) = (q2, 0, R)$
+    \item $\delta(q2, 1) = (q3, 1, R)$
+    \item $\delta(q3, 0/1) = (q3, 0/1, R)$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{1001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{0001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{01} & \textbf{Reject} & No 001. \\ \hline
+\texttt{00} & \textbf{Reject} & Incomplete. \\ \hline
+\end{tabular}
+\end{center}
+
+\clearpage
+
+\section{Discussion}
+This section contains per-question interpretation of correctness and conceptual insights.
+
+\subsection{Discussion for Question 1}
+The NPDA utilizes the stack to maintain the count of 'a's. For every 'a' read, one is pushed onto the stack. For every 'b', one 'a' is popped. The acceptance condition relies on the stack being empty (or containing only the bottom marker) after processing the entire string, ensuring the number of 'a's exactly matches the number of 'b's. The non-determinism allows for the transition from pushing to popping mode.
+\subsection{Discussion for Question 2}
+This DFA enforces a strict sequence: a single 'a', followed by at least two 'b's, and then at least three 'a's. The states are arranged sequentially to count the mandatory occurrences. Loops on the intermediate states allow for $n > 2$ and $m > 3$, ensuring that extra 'b's or 'a's do not break the acceptance condition as long as the minimum counts are met.
+\subsection{Discussion for Question 3}
+The DFA maintains a state corresponding to the longest suffix of the input read so far that matches a prefix of '0011'. If a character breaks the sequence, the transition returns to the state representing the longest valid prefix preserved (e.g., receiving a '0' after '001' transitions back to the '00' state). This ensures that the machine always correctly identifies when the specific suffix '0011' concludes the string.
+\subsection{Discussion for Question 4}
+This NPDA demonstrates adding two counts on the stack. First, 'a's are pushed, then 'b's are pushed. When 'c's are encountered, the machine pops 'b's first, and once 'b's are exhausted, it begins popping 'a's. This correctly verifies that the total number of 'c's equals the sum of 'a's and 'b's ($n+m$). The transition to the popping state is non-deterministic or triggered by the first 'c'.
+\subsection{Discussion for Question 5}
+The DFA acts as a filter for the forbidden substring 'abb'. It tracks the sequence 'a', 'ab'. If 'b' follows 'ab', it enters a trap state (dead state) from which it never escapes. All other states are accepting, ensuring that only strings containing the sequence 'abb' are rejected, while all others are accepted.
+\subsection{Discussion for Question 12}
+The NFA handles the ambiguity where 'ab' can be a standalone unit or the prefix of 'abc'. The non-determinism at the end of 'ab' allows the machine to either loop back to the start (accepting 'ab') or continue to match 'c' (accepting 'abc'). This simplifies the design compared to a DFA, which would require lookahead-like states.
+\subsection{Discussion for Question 13}
+Similar to other suffix-matching DFAs, this machine tracks the progress towards 'abb'. The transition on 'a' from the 'ab' state goes back to the 'a' state, preserving the potential start of a new pattern. The final state represents having just completed 'abb'.
+\subsection{Discussion for Question 14}
+This DFA recognizes the suffix 'abba'. The final state is not a trap; receiving an 'a' in the final state transitions back to the state representing 'a' (start of pattern), and 'b' transitions to the state for 'ab' (overlap), allowing detection of overlapping occurrences or subsequent valid suffixes.
+\subsection{Discussion for Question 15}
+This automaton searches for the substring 'the'. Unlike suffix matching, once the final state is reached (meaning 'the' has been seen), the machine loops in that accepting state regardless of future input. This effectively "latches" onto the acceptance once the criteria is met.
+\subsection{Discussion for Question 16}
+This DFA ensures the string *ends* with 'ing'. If 'ing' is found, any subsequent non-matching character must reset the search, ensuring the pattern is strictly at the end of the string. For example, 'sing' is accepted, but 'singer' is rejected because the 'er' moves the machine out of the final state.
+\subsection{Discussion for Question 29}
+The Turing Machine operates by matching the first and last symbols. It marks the first symbol, moves to the end to verify the corresponding last symbol, marks it, and repeats. This recursive matching from outside in verifies the palindrome property. It accepts both even and odd length palindromes (where one center character remains).
+\subsection{Discussion for Question 30}
+This TM verifies even-length palindromes ($ww^R$). It follows the same logic as the general palindrome machine but strictly rejects if a single middle character remains. It requires the tape to be fully cleared (marked) in pairs, ensuring the total length is even.
+\subsection{Discussion for Question 24}
+The TM uses a zig-zag approach. It marks a '0' at the start, moves right to find the first unmarked '1', marks it, and returns to the start. This one-to-one mapping ensures equal counts of 0s and 1s. If it runs out of one symbol while the other remains, it rejects.
+\subsection{Discussion for Question 25}
+\end{center}
+
+\subsection{Results for Question 30}
+
+
+
+Construct a TM to accept the language $L=\{ww^R |w \in (a+b)^*\}$
+
+\subsubsection*{Description}
+This language represents even-length palindromes. The TM matches the first and last characters, erasing them, and repeats. It rejects odd-length strings (unlike the general palindrome TM which accepts the last single character).
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Reads first char.
+    \item \texttt{q1}: Moves right to find end (after reading 'a').
+    \item \texttt{q2}: Checks last char (expecting 'a').
+    \item \texttt{q3}: Returns to start.
+    \item \texttt{q4}: Moves right to find end (after reading 'b').
+    \item \texttt{q5}: Checks last char (expecting 'b').
+    \item \texttt{q6}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, a) = (q1, \square, R)$
+    \item $\delta(q0, b) = (q4, \square, R)$
+    \item $\delta(q0, \square) = (q6, \square, S)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{abba} & \textbf{Accept} & $w=ab, w^R=ba$. \\ \hline
+\texttt{aaaa} & \textbf{Accept} & $w=aa, w^R=aa$. \\ \hline
+\texttt{aba} & \textbf{Reject} & Odd length. \\ \hline
+\texttt{ab} & \textbf{Reject} & Not a palindrome. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 24}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n | n \ge 1 \}$.
+
+\subsubsection*{Description}
+The TM marks '0's with 'X' and corresponding '1's with 'Y'. It zig-zags between the beginning of the 0s and the beginning of the 1s.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Marks next '0'.
+    \item \texttt{q1}: Moves right to find first '1'.
+    \item \texttt{q2}: Moves left to find last 'X'.
+    \item \texttt{q3}: Checks if any '1's remain after all '0's are marked.
+    \item \texttt{q4}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 0) = (q1, X, R)$
+    \item $\delta(q1, 1) = (q2, Y, L)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{01} & \textbf{Accept} & 1 zero, 1 one. \\ \hline
+\texttt{0011} & \textbf{Accept} & 2 zeros, 2 ones. \\ \hline
+\texttt{001} & \textbf{Reject} & More zeros. \\ \hline
+\texttt{011} & \textbf{Reject} & More ones. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 25}
+
+
+
+Design a Turing Machine to accept the language $L=\{ 0^n 1^n 2^n | n \ge 1 \}$.
+
+\subsubsection*{Description}
+The TM marks '0' with 'X', finds the first '1' and marks it 'Y', then finds the first '2' and marks it 'Z'. It repeats this cycle.
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. Marks next '0'.
+    \item \texttt{q1}: Moves right to find first '1'.
+    \item \texttt{q2}: Moves right to find first '2'.
+    \item \texttt{q3}: Moves left to find last 'X'.
+    \item \texttt{q5}: Checks if any '1's or '2's remain after all '0's are marked.
+    \item \texttt{q6}: Final state (Accept).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 0) = (q1, X, R)$
+    \item $\delta(q1, 1) = (q2, Y, R)$
+    \item $\delta(q2, 2) = (q3, Z, L)$
+    \item ... (See JFLAP file for full set)
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{012} & \textbf{Accept} & 1 of each. \\ \hline
+\texttt{001122} & \textbf{Accept} & 2 of each. \\ \hline
+\texttt{01} & \textbf{Reject} & Missing 2. \\ \hline
+\texttt{0122} & \textbf{Reject} & Extra 2. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Results for Question 26}
+
+
+
+Construct a Turing Machine to accept the language $L=\{ w |w \in (0+1)^* \}$ Containing the substring 001.
+
+\subsubsection*{Description}
+The TM scans the tape from left to right looking for the sequence '001'. Once found, it enters a final state and halts (or loops in final state).
+
+\begin{itemize}
+    \item \textbf{States}:
+    \item \texttt{q0}: Start. No part of '001' matched.
+    \item \texttt{q1}: Matched '0'.
+    \item \texttt{q2}: Matched '00'.
+    \item \texttt{q3}: Matched '001' (Final).
+\end{itemize}
+
+\subsubsection*{Transitions}
+\begin{itemize}
+    \item $\delta(q0, 1) = (q0, 1, R)$
+    \item $\delta(q0, 0) = (q1, 0, R)$
+    \item $\delta(q1, 1) = (q0, 1, R)$
+    \item $\delta(q1, 0) = (q2, 0, R)$
+    \item $\delta(q2, 0) = (q2, 0, R)$
+    \item $\delta(q2, 1) = (q3, 1, R)$
+    \item $\delta(q3, 0/1) = (q3, 0/1, R)$
+\end{itemize}
+
+\subsubsection*{Test Strings}
+\begin{center}
+\begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+\hline
+\textbf{String} & \textbf{Result} & \textbf{Explanation} \\ \hline
+\texttt{001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{1001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{0001} & \textbf{Accept} & Contains 001. \\ \hline
+\texttt{01} & \textbf{Reject} & No 001. \\ \hline
+\texttt{00} & \textbf{Reject} & Incomplete. \\ \hline
+\end{tabular}
+\end{center}
+
+\clearpage
+
+\section{Discussion}
+This section contains per-question interpretation of correctness and conceptual insights.
+
+\subsection{Discussion for Question 1}
+The NPDA utilizes the stack to maintain the count of 'a's. For every 'a' read, one is pushed onto the stack. For every 'b', one 'a' is popped. The acceptance condition relies on the stack being empty (or containing only the bottom marker) after processing the entire string, ensuring the number of 'a's exactly matches the number of 'b's. The non-determinism allows for the transition from pushing to popping mode.
+\subsection{Discussion for Question 2}
+This DFA enforces a strict sequence: a single 'a', followed by at least two 'b's, and then at least three 'a's. The states are arranged sequentially to count the mandatory occurrences. Loops on the intermediate states allow for $n > 2$ and $m > 3$, ensuring that extra 'b's or 'a's do not break the acceptance condition as long as the minimum counts are met.
+\subsection{Discussion for Question 3}
+The DFA maintains a state corresponding to the longest suffix of the input read so far that matches a prefix of '0011'. If a character breaks the sequence, the transition returns to the state representing the longest valid prefix preserved (e.g., receiving a '0' after '001' transitions back to the '00' state). This ensures that the machine always correctly identifies when the specific suffix '0011' concludes the string.
+\subsection{Discussion for Question 4}
+This NPDA demonstrates adding two counts on the stack. First, 'a's are pushed, then 'b's are pushed. When 'c's are encountered, the machine pops 'b's first, and once 'b's are exhausted, it begins popping 'a's. This correctly verifies that the total number of 'c's equals the sum of 'a's and 'b's ($n+m$). The transition to the popping state is non-deterministic or triggered by the first 'c'.
+\subsection{Discussion for Question 5}
+The DFA acts as a filter for the forbidden substring 'abb'. It tracks the sequence 'a', 'ab'. If 'b' follows 'ab', it enters a trap state (dead state) from which it never escapes. All other states are accepting, ensuring that only strings containing the sequence 'abb' are rejected, while all others are accepted.
+\subsection{Discussion for Question 12}
+The NFA handles the ambiguity where 'ab' can be a standalone unit or the prefix of 'abc'. The non-determinism at the end of 'ab' allows the machine to either loop back to the start (accepting 'ab') or continue to match 'c' (accepting 'abc'). This simplifies the design compared to a DFA, which would require lookahead-like states.
+\subsection{Discussion for Question 13}
+Similar to other suffix-matching DFAs, this machine tracks the progress towards 'abb'. The transition on 'a' from the 'ab' state goes back to the 'a' state, preserving the potential start of a new pattern. The final state represents having just completed 'abb'.
+\subsection{Discussion for Question 14}
+This DFA recognizes the suffix 'abba'. The final state is not a trap; receiving an 'a' in the final state transitions back to the state representing 'a' (start of pattern), and 'b' transitions to the state for 'ab' (overlap), allowing detection of overlapping occurrences or subsequent valid suffixes.
+\subsection{Discussion for Question 15}
+This automaton searches for the substring 'the'. Unlike suffix matching, once the final state is reached (meaning 'the' has been seen), the machine loops in that accepting state regardless of future input. This effectively "latches" onto the acceptance once the criteria is met.
+\subsection{Discussion for Question 16}
+This DFA ensures the string *ends* with 'ing'. If 'ing' is found, any subsequent non-matching character must reset the search, ensuring the pattern is strictly at the end of the string. For example, 'sing' is accepted, but 'singer' is rejected because the 'er' moves the machine out of the final state.
+\subsection{Discussion for Question 29}
+The Turing Machine operates by matching the first and last symbols. It marks the first symbol, moves to the end to verify the corresponding last symbol, marks it, and repeats. This recursive matching from outside in verifies the palindrome property. It accepts both even and odd length palindromes (where one center character remains).
+\subsection{Discussion for Question 30}
+This TM verifies even-length palindromes ($ww^R$). It follows the same logic as the general palindrome machine but strictly rejects if a single middle character remains. It requires the tape to be fully cleared (marked) in pairs, ensuring the total length is even.
+\subsection{Discussion for Question 24}
+The TM uses a zig-zag approach. It marks a '0' at the start, moves right to find the first unmarked '1', marks it, and returns to the start. This one-to-one mapping ensures equal counts of 0s and 1s. If it runs out of one symbol while the other remains, it rejects.
+\subsection{Discussion for Question 25}
+This TM extends the counting logic to three symbols. It marks a '0', searches for a '1' to mark, then searches for a '2' to mark, before returning to the start. This ensures $n$ instances of each symbol appear in the correct order ($0^n 1^n 2^n$).
+\subsection{Discussion for Question 26}
+The TM scans the tape linearly for the pattern '001'. Upon finding the sequence '0', '0', '1' consecutively, it enters the final accepting state and halts. The machine does not need to consume the entire input; finding the substring once is sufficient for acceptance.
+\newpage
+\section{Comparative Analysis}
+The following table summarizes the key differences between the computational models explored in this assignment. It highlights the hierarchy of power, memory capabilities, and the class of languages each model can recognize.
+
+\begin{center}
+\begin{tabular}{|p{0.15\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|}
+\hline
+\textbf{Model} & \textbf{Memory Mechanism} & \textbf{Language Class} & \textbf{Key Characteristic} \\ \hline
+\textbf{DFA / NFA} & Finite States (No auxiliary memory) & Regular Languages & Limited to patterns with fixed memory requirements (e.g., modulo counting, fixed substrings). \\ \hline
+\textbf{PDA} & Finite States + Infinite Stack (LIFO) & Context-Free Languages & Can count two related quantities or handle nested structures (e.g., balanced parentheses, $a^n b^n$). \\ \hline
+\textbf{TM} & Finite States + Infinite Tape (Read/Write) & Recursively Enumerable Languages & Capable of arbitrary computation, including multiple comparisons and complex pattern recognition (e.g., $0^n 1^n 2^n$, $ww^R$). \\ \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusion}
+This assignment provided a comprehensive practical application of automata theory, traversing the Chomsky hierarchy from Regular to Recursively Enumerable languages. Through the design and verification of Finite Automata, Pushdown Automata, and Turing Machines, we observed the increasing computational power required to solve more complex problems.
+
+The transition from DFAs to PDAs highlighted the necessity of stack memory for matching counts, while the move to Turing Machines demonstrated the power of an infinite read/write tape for solving problems beyond the scope of context-free grammars. The use of JFLAP for simulation was instrumental in visualizing state transitions and verifying the correctness of each model against edge cases.
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{hopcroft}
+Hopcroft, J. E., Motwani, R., \& Ullman, J. D. (2006). \textit{Introduction to Automata Theory, Languages, and Computation} (3rd ed.). Pearson.
+
+\bibitem{sipser}
+Sipser, M. (2012). \textit{Introduction to the Theory of Computation} (3rd ed.). Cengage Learning.
+
+\bibitem{linz}
+Linz, P. (2016). \textit{An Introduction to Formal Languages and Automata} (6th ed.). Jones \& Bartlett Learning.
+\end{thebibliography}
+
+\end{document}
